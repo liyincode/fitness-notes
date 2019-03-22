@@ -1,0 +1,10 @@
+<!--miniprogram/pages/test/test.wxml-->
+<view class="container">
+    <view>
+        <text>{{}}</text>
+    </view>
+    <view>
+        <button type="default" size="default" bindtouchstart="streamRecord" bindtouchend="endStreamRecord">测试</button>
+    </view>
+    <view style='width:80%; height:80rpx; background-color:red' catchtouchstart="streamRecord" catchtouchend="endStreamRecord">test</view>
+</view>

@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/test/test"
+  ],
+  "window": {
+    "backgroundColor": "#f8f8f8",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#f8f8f8",
+    "navigationBarTitleText": "健身小笔记",
+    "navigationBarTextStyle": "black"
+    
+  },
+    "tabBar": {
+      "color": "#7A7E83",
+      "selectedColor": "#3cc51f",
+      "borderStyle": "black",
+      "backgroundColor": "#ffffff",
+      "list": [
+        {
+          "pagePath": "pages/index/index",
+          "iconPath": "images/write.png",
+          "selectedIconPath": "images/write-selected.png",
+          "text": "记录"
+        },
+        {
+          "pagePath": "pages/test/test",
+          "iconPath": "images/my.png",
+          "selectedIconPath": "images/my-selected.png",
+          "text": "我"
+        }
+      ]
+    },
+  "plugins": {
+    "WechatSI": {
+      "version": "0.2.2",
+      "provider": "wx069ba97219f66d99"
+    }
+  }
+}

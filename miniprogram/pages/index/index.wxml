@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="page__hd">
+    <view class="page__title">Hi!</view>
+    <view class="page__desc">你好，「健身小笔记」可以帮助你健身期间通过语言或文字记录当时状态的小程序。</view>
+  </view>
+  <view class="page__bd page__bd_spacing">
+    <view class="text-box" scroll-y="true" scroll-top="{{scrollTop}}">
+      <textarea>{{text}}</textarea>
+    </view>
+    <button class="weui-btn" type="primary" bindtap="add">请说话</button>
+    <button class="weui-btn" type="default" bindtap="remove">删除</button>
+  </view>
+</view>
