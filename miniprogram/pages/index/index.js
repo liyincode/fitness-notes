@@ -1,3 +1,6 @@
+const app = getApp()
+var plugin = requirePlugin("WechatSI")
+let manager = plugin.getRecordRecognitionManager()
 
 Page({
 
@@ -5,13 +8,14 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    text:"等待输入。。。"
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.initRecord()
   },
 
   /**
@@ -62,5 +66,80 @@ Page({
   onShareAppMessage: function () {
 
   },
+
+  /**
+  * 触摸开始
+  */
+  streamRecord: function (event) {
+    // console.log(event)
+    manager.start()
+  },
+
+  /**
+   * 触摸结束
+   */
+  endStreamRecord: function (event) {
+    // console.log(event)
+    manager.stop()
+  },
+
+  /**
+   * 
+   */
+  initRecord: function () {
+
+    // 正常录音时调用此事件
+    manager.onStart = (res) => {
+      console.log(res)
+    }
+
+    // 识别结束事件
+    manager.onStop = (res) => {
+      console.log(res)
+      this.setData({
+        text: res.result
+      })
+
+      /**
+       * 开始上传语音
+       */
+      wx.showLoading({
+        title: '上传语音中',
+      })
+
+      const filePath = res.tempFilePath
+
+      const cloudPath = 'recording/2' + filePath.match(/\.[^.]+?$/)[0]
+      wx.cloud.uploadFile({
+        cloudPath,
+        filePath,
+        success: res => {
+          console.log('[上传文件] 成功：', res)
+
+        },
+        fail: e => {
+          console.error('[上传文件] 失败：', e)
+          wx.showToast({
+            icon: 'none',
+            title: '上传失败',
+          })
+        },
+        complete: () => {
+          wx.hideLoading()
+        }
+      })
+    }
+
+    // 识别错误事件
+    manager.onError = (res) => {
+      console.log(res)
+    }
+
+    // 有新的识别内容返回，则会调用此事件
+    manager.onRecognize = (res) => {
+      console.log(res)
+
+    }
+  }
 
 })

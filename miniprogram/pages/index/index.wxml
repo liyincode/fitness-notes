@@ -7,7 +7,7 @@
     <view class="text-box" scroll-y="true" scroll-top="{{scrollTop}}">
       <textarea>{{text}}</textarea>
     </view>
-    <button class="weui-btn" type="primary" bindtap="add">请说话</button>
-    <button class="weui-btn" type="default" bindtap="remove">删除</button>
+    <button class="weui-btn" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">请说话</button>
+    <button class="weui-btn" type="default" >删除</button>
   </view>
 </view>
