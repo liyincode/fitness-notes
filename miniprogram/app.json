@@ -19,15 +19,15 @@
       "list": [
         {
           "pagePath": "pages/index/index",
-          "iconPath": "images/write.png",
-          "selectedIconPath": "images/write-selected.png",
+          "iconPath": "images/recording.png",
+          "selectedIconPath": "images/recording-selected.png",
           "text": "记录"
         },
         {
           "pagePath": "pages/test/test",
-          "iconPath": "images/my.png",
-          "selectedIconPath": "images/my-selected.png",
-          "text": "我"
+          "iconPath": "images/notes.png",
+          "selectedIconPath": "images/notes-selected.png",
+          "text": "笔记"
         }
       ]
     },
