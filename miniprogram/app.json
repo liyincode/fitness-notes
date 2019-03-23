@@ -1,7 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/test/test"
+    "pages/notes/notes"
   ],
   "window": {
     "backgroundColor": "#f8f8f8",
@@ -24,7 +24,7 @@
           "text": "记录"
         },
         {
-          "pagePath": "pages/test/test",
+          "pagePath": "pages/notes/notes",
           "iconPath": "images/notes.png",
           "selectedIconPath": "images/notes-selected.png",
           "text": "笔记"

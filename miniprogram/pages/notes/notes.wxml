@@ -1,0 +1,53 @@
+<!-- miniprogram/pages/test/test.wxml -->
+<view class="page">
+<view class="page__bd">
+       <view class="weui-panel weui-panel_access">
+            <view class="weui-panel__bd">
+                <view  class="weui-media-box weui-media-box_appmsg" >
+                    <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                        <image class="weui-media-box__thumb" src="{{icon60}}" />
+                    </view>
+                    <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                        <view class="weui-media-box__title">Young!</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+</view>
+  <view class="page__bd">
+    <view class="weui-cells__title">03/22 23:36</view>
+    <view class="weui-cells weui-cells_after-title">
+      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__hd">
+          <image src="{{icon}}" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">cell standard</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">说明文字</view>
+      </navigator>
+      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__hd">
+          <image src="/images/play.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">cell standard</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">00:00</view>
+      </navigator>
+    </view>
+    <view class="weui-cells__title">03/22 23:36</view>
+    <view class="weui-cells weui-cells_after-title">
+      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__hd">
+          <image src="/images/pause.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd">cell standard</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">00:00</view>
+      </navigator>
+      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__hd">
+          <image src="/images/play.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+        </view>
+        <view class="weui-cell__bd text-desc">练完之后肩膀很疼痛，然后腿也疼，浑身都疼痛</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">00:00</view>
+      </navigator>
+    </view>
+  </view>
+</view>

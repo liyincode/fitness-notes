@@ -1,0 +1,24 @@
+/* miniprogram/pages/test/test.wxss */
+.text-desc {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.weui-media-box {
+    padding: 34px 16px;
+}
+
+.weui-media-box__thumb {
+    border-radius: 5px;
+}
+
+.weui-panel:before {
+    border-top: none;
+    
+  }
+  
+  .weui-panel:after {
+    border-bottom: 0.5rpx solid #e5e5e5;
+    
+  }
