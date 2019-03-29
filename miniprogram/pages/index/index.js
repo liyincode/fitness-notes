@@ -8,13 +8,33 @@ Page({
    * 页面的初始数据
    */
   data: {
-    text:"等待输入。。。"
+    // 是否已获取用户信息
+    logged: false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+
+    // 获取用户信息
+    wx.getSetting({
+      success: res => {
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+          wx.getUserInfo({
+            success: res => {
+              this.setData({
+                avatarUrl: res.userInfo.avatarUrl,
+                userInfo: res.userInfo
+              })
+            }
+          })
+        }
+      }
+    })
+
+    // 初始化语音插件    
     this.initRecord()
   },
 
@@ -68,6 +88,47 @@ Page({
   },
 
   /**
+   * 获取用户基本信息 
+   */
+  onGetUserInfo: function (e) {
+    console.log(e)
+    if (!this.logged && e.detail.userInfo) {
+      this.setData({
+        logged: true,
+        avatarUrl: e.detail.userInfo.avatarUrl,
+        userInfo: e.detail.userInfo
+      })
+    }
+  },
+
+  /**
+   * 保存文字和语音 
+   */
+  addContent: function () {
+    console.log(e)
+    const db = wx.cloud.database()
+    db.collection('content').add({
+      data: {
+        text: this.text 
+      },
+      success: res => {
+        // 在返回结果中会包含新创建的记录的 _id
+        wx.showToast({
+          title: '新增记录成功',
+        })
+        console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
+      },
+      fail: err => {
+        wx.showToast({
+          icon: 'none',
+          title: '新增记录失败'
+        })
+        console.error('[数据库] [新增记录] 失败：', err)
+      }
+    })
+  },
+
+  /**
   * 触摸开始
   */
   streamRecord: function (event) {
@@ -84,22 +145,9 @@ Page({
   },
 
   /**
-   * 
+   * 上传语音
    */
-  initRecord: function () {
-
-    // 正常录音时调用此事件
-    manager.onStart = (res) => {
-      console.log(res)
-    }
-
-    // 识别结束事件
-    manager.onStop = (res) => {
-      console.log(res)
-      this.setData({
-        text: res.result
-      })
-
+  uploadRecoding: function(res) {
       /**
        * 开始上传语音
        */
@@ -128,6 +176,27 @@ Page({
           wx.hideLoading()
         }
       })
+  },
+
+  /**
+   * 
+   */
+  initRecord: function () {
+
+    // 正常录音时调用此事件
+    manager.onStart = (res) => {
+      console.log(res)
+    }
+
+    // 识别结束事件
+    manager.onStop = (res) => {
+      console.log(res)
+      this.setData({
+        text: res.result
+      })
+      // 上传语音
+      this.uploadRecoding(res)
+      this.addContent()
     }
 
     // 识别错误事件

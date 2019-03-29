@@ -5,9 +5,9 @@
   </view>
   <view class="page__bd page__bd_spacing">
     <view class="text-box" scroll-y="true" scroll-top="{{scrollTop}}">
-      <textarea>{{text}}</textarea>
+      <text>{{text}}</text>
     </view>
-    <button class="weui-btn" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">请说话</button>
-    <button class="weui-btn" type="default" >点击保存<text space='ensp'> | 长按清空</text></button>
+    <button class="weui-btn" type="primary"  catchtouchstart="streamRecord" catchtouchend="endStreamRecord">请说话</button>
+    <button class="weui-btn" type="default" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">点击保存<text space='ensp'> | 长按清空</text></button>
   </view>
 </view>
