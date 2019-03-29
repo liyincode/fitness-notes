@@ -1,13 +1,15 @@
-<view class="page">
-  <view class="page__hd">
-    <view class="page__title">Hi!</view>
-    <view class="page__desc">你好，「健身小笔记」可以帮助你在健身期间通过语言或文字快速记录身体状态感受。</view>
-  </view>
-  <view class="page__bd page__bd_spacing">
-    <view class="text-box" scroll-y="true" scroll-top="{{scrollTop}}">
-      <text>{{text}}</text>
-    </view>
-    <button class="weui-btn" type="primary"  catchtouchstart="streamRecord" catchtouchend="endStreamRecord">请说话</button>
-    <button class="weui-btn" type="default" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">点击保存<text space='ensp'> | 长按清空</text></button>
-  </view>
+<view class="container">
+  <scroll-view id="scroll-content" 
+  class="dialog-part"
+  scroll-top="{{scroll_top}}" 
+  scroll-y="true" 
+  enable-back-to-top="true" 
+  enable-back-to-top="true"
+  scroll-with-animation="true">
+  <!-- 当没有说话并且没有卡片列表时 -->
+<view class="dialog-wrap" id="translate-empty" wx:if="{{!recording && dialogList.length == 0}}">
+  <result-bubble item="{{initTranslate}}" record-status="0"></result-bubble>
+</view>
+
+  </scroll-view>
 </view>

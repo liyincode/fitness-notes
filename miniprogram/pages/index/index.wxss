@@ -1,20 +1,34 @@
-.page__bd_spacing{
-  padding: 0 80rpx;
+/**app.wxss**/
+.container {
+  height: 100%;
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  justify-content: space-between;
+  -webkit-justify-content: space-between;
+  box-sizing: border-box;
+  position:relative;
+  font-family: "PingFang-SC-Regular","SimSun","Microsoft Yahei";
+  font-variant-ligatures: none;
+  background-color: #FAFAFA;
+}
+page {
+  height: 100%;
+  width: 100%;
+  background: #FAFAFA;
 }
 
-button{
-  margin: 40rpx 0;
+input {
+  font-family: "PingFang-SC-Regular","SimSun","Microsoft Yahei";
 }
-.text-box{
-  margin-bottom: 70rpx;
-  padding: 40rpx 0;
-  display: flex;
-  min-height: 300rpx;
-  background-color: #FFFFFF;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 30rpx;
-  color: #353535;
-  line-height: 2em;
+
+
+.dialog-part {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 257rpx;
+  right: 0;
+  z-index:1;
 }

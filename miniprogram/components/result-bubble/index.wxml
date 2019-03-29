@@ -1,0 +1,13 @@
+<view class="bubble-wrap" bindlongpress="showModal">
+    <!-- 提醒复制，删除的弹框 -->
+    <view class="modal-wrap" wx:if="{{recordStatus ==  2}}">
+        <modal modal-show="{{modalShow}}"
+            index="{{index}}"
+            item="{{item}}"
+            bindmodalleave="modalLeave">
+        </modal>
+    </view>
+
+    <!-- 创建时间 -->
+    <view class="create-time"> {{item.create}}</view>
+</view>

@@ -1,6 +1,9 @@
 const app = getApp()
-var plugin = requirePlugin("WechatSI")
-let manager = plugin.getRecordRecognitionManager()
+
+const plugin = requirePlugin("WechatSI")
+
+const manager = plugin.getRecordRecognitionManager()
+
 
 Page({
 
@@ -8,6 +11,20 @@ Page({
    * 页面的初始数据
    */
   data: {
+    dialogList: [],
+
+    scroll_top: 10000, // 竖向滚动条位置
+
+    initTranslate: {
+      // 为空时的卡片内容
+      create: '04/27 15:37',
+      text: '等待说话',
+    },
+
+    recording: false,  // 正在录音
+
+    toView: 'fake',  // 滚动位置
+
     // 是否已获取用户信息
     logged: false
   },
@@ -209,6 +226,10 @@ Page({
       console.log(res)
 
     }
+  },
+
+  test: function(e) {
+    console.log(e)
   }
 
 })
