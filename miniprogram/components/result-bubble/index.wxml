@@ -1,13 +1,22 @@
 <view class="bubble-wrap" bindlongpress="showModal">
     <!-- 提醒复制，删除的弹框 -->
     <view class="modal-wrap" wx:if="{{recordStatus ==  2}}">
-        <modal modal-show="{{modalShow}}"
-            index="{{index}}"
-            item="{{item}}"
-            bindmodalleave="modalLeave">
-        </modal>
+        <modal modal-show="{{modalShow}}" index="{{index}}" item="{{item}}" bindmodalleave="modalLeave"></modal>
     </view>
-
     <!-- 创建时间 -->
-    <view class="create-time"> {{item.create}}</view>
+    <view class="create-time">{{item.create}}</view>
+    <view class="section-body" data-index="{{index}}">
+        <view class="send-message">
+            <view data-id="{{item.id}}" class="text-content" data-index="{{index}}">
+                <view class="text-detail text-detail-{{item.lfrom}}">
+                    {{item.text}}
+                    <waiting-icon wx:if="{{recordStatus == 0}}"></waiting-icon>
+                </view>
+            </view>
+            <!-- 播放声音按钮 -->
+            <view class="play-icon" catchtap="playTranslateVoice" cattouchstart="palyTranslateVoice" wx:if="{{recordStatus == 2}}">
+                <play-icon play-type="{{playType}}"></play-icon>
+            </view>
+        </view>
+    </view>
 </view>

@@ -1,15 +1,29 @@
 <view class="container">
-  <scroll-view id="scroll-content" 
-  class="dialog-part"
-  scroll-top="{{scroll_top}}" 
-  scroll-y="true" 
-  enable-back-to-top="true" 
-  enable-back-to-top="true"
-  scroll-with-animation="true">
-  <!-- 当没有说话并且没有卡片列表时 -->
-<view class="dialog-wrap" id="translate-empty" wx:if="{{!recording && dialogList.length == 0}}">
-  <result-bubble item="{{initTranslate}}" record-status="0"></result-bubble>
-</view>
+  <scroll-view id="scroll-content" class="dialog-part" scroll-top="{{scroll_top}}" scroll-y="true" enable-back-to-top="true" enable-back-to-top="true" scroll-with-animation="true">
+    <!-- 当没有说话并且没有卡片列表时 -->
+    <view class="dialog-wrap" id="translate-empty" wx:if="{{!recording && dialogList.length == 0}}">
+      <result-bubble item="{{initTranslate}}" record-status="0"></result-bubble>
+    </view>
+    <!-- 已记录的列表 -->
+    <view wx:for="{{dialogList}}" wx:key="id" class="dialog-wrap" data-index="{{index}}" catchmodaldelete="deleteItem">
+      <result-bubble item="{{item}}"></result-bubble>
+    </view>
+    <!-- 当前录音内容 -->
+    <view class="dialog-wrap" id="translate-recording" wx:if="{{recording}}">
+      <result-bubble item="{{currentTranslate}}" record-status="{{recordStatus}}"></result-bubble>
+    </view>
+    <view id="translate-fake"></view>
 
   </scroll-view>
+  <!-- 页脚 -->
+  <view class="foot-group" catchlongpress="catchTapEvent">
+    <view class="button-wrap">
+      <button class="weui-btn" disabled="{{bottomButtonDisabled}}" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
+        请说话
+      </button>
+      <button class="weui-btn" type="default" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+        点击保存
+      </button>
+    </view>
+  </view>
 </view>
