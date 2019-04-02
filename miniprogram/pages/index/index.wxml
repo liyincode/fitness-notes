@@ -12,7 +12,7 @@
     </view>
     <!-- 已记录的列表 -->
     <view wx:for="{{dialogList}}" wx:key="id" class="dialog-wrap" data-index="{{index}}" catchmodaldelete="deleteItem">
-      <result-bubble item="{{item}}"></result-bubble>
+      <result-bubble item="{{item}}" index="{{index}}"></result-bubble>
     </view>
     <!-- 当前录音内容 -->
     <view class="dialog-wrap" id="translate-recording" wx:if="{{recording}}">

@@ -12,10 +12,10 @@ let modalItems = [
       type: 'delete',
       text: conf.delete_item
     },
-    {
-      type: 'copyTarget',
-      text: conf.copy_target_text
-    },
+    // {
+    //   type: 'copyTarget',
+    //   text: conf.copy_target_text
+    // },
 ]
 
 Component({

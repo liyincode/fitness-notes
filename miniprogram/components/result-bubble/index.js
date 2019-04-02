@@ -43,6 +43,19 @@ Component({
   methods: {
 
     /**
+     * 显示悬浮框
+     */
+    showModal: function () {
+      this.setData({ modalShow: true })
+    },
+    /**
+     * 离开悬浮框
+     */
+    modalLeave: function() {
+      this.setData({modalShow: false})
+    },
+
+    /**
      * 点击播放按钮
      */
     clickPlayVoice: function () {
@@ -71,11 +84,11 @@ Component({
       // 音频数据源
       let play_path = this.data.item.temVoicePath
 
-      if(!play_path) {
+      if (!play_path) {
         console.warn(" no voice path")
-        return 
+        return
       }
-      
+
       this.playAnimationStart()
       backgroundAudioManager.src = play_path
 
@@ -86,15 +99,14 @@ Component({
       })
       // 监听背景音乐播放事件
       backgroundAudioManager.onPlay(() => {
-        console.log('监听背景音乐播放事件')
+        console.log('voice is palying')
         this.playAnimationStart()
       })
       // 监听背景音乐加载中事件
       backgroundAudioManager.onWaiting(() => {
-        console.log('监听音频资源加载事件')
+        console.log('voice is loading')
         this.playAnimationLoading()
-      } )
-
+      })
 
     },
 

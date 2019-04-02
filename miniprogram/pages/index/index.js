@@ -19,13 +19,11 @@ Page({
     //   {
     //   // 当前语音输入内容
     //   create: '04/27 15:37',
-    //   lfrom: 'zh_CN',
-    //   lto: 'en_US',
     //   text: '这是测试这是测试这是测试这是测试',
     //   translateText: 'this is test.this is test.this is test.this is test.',
-    //   voicePath: '',
-    //   translateVoicePath: '',
-    //   autoPlay: false, // 自动播放背景音乐
+    //   temVoicePath: '',
+    //   temVoiceDuration: '',
+    //   temFileSize: '',
     //   id: 0,
     // },
     ],
@@ -34,9 +32,10 @@ Page({
 
     bottomButtonDisable: false, // 说话按钮 disabled
 
+    // 初始化卡片内容
     initTranslate: {
       // 为空时的卡片内容
-      create: '04/27 15:37',
+      create: '',
       text: '等待说话',
     },
 
@@ -79,6 +78,15 @@ Page({
 
     // 初始化语音插件    
     this.initRecord()
+
+    this.setData({
+      toView: this.data.toView
+    })
+
+    // 获取权限
+    app.getRecordAuth()
+
+
   },
 
   /**
@@ -92,7 +100,16 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.scrollToNew();
 
+    this.initCard()
+
+    // 当打开还在翻译时，显示透明蒙层，不许触碰
+    if(this.data.recordStatus == 2) {
+      wx.showLoading({
+        mask: true
+      })
+    }
   },
 
   /**
@@ -287,7 +304,7 @@ Page({
         id: lastId,
         temVoicePath: res.tempFilePath, // 录音临时文件
         temVoiceDuration: res.duration, // 录音总时长
-        temFileSize: res.fireSize // 文件大小
+        temFileSize: res.fileSize // 文件大小
       })
 
       this.setData({
@@ -313,7 +330,7 @@ Page({
       } else {
         console.error('index error', this.data.dialogList)
       }
-
+      console.log('加入新的语音后', this.data.dialogList)
       this.scrollToNew();
 
       // 上传语音
@@ -345,16 +362,6 @@ Page({
       this.scrollToNew;
     }
 
-    // 语音播放开始事件
-    wx.onBackgroundAudioPlay(res=>{
-      const backgroundAudioManager = wx.getBackgroundAudioManager()
-      let src = backgroundAudioManager.src
-      console.log('捕获当前播放语音路径', src)
-
-      this.setData({
-        currentTranslateVoice: src
-      })
-    })
   },
 
   /**
@@ -378,8 +385,39 @@ Page({
         console.log(res);
       }
     })
+  },
 
+  /**
+   * 初始化卡片内容
+   */
+  initCard: function () {
+    let initTranslateNew = Object.assign({}, this.data.initTranslate, {
+      create: util.recordTime(new Date()),
+    })
+    this.setData({
+      initTranslate: initTranslateNew
+    })
+  },
 
+  /**
+   * 删除卡片
+   */
+  deleteItem: function(e) {
+    console.log('删除卡片', e)
+    let detail = e.detail
+    let item = detail.item
+
+    let tmpDialogList = this.data.dialogList.slice(0)
+    let arrIndex = detail.index
+    tmpDialogList.splice(arrIndex, 1)
+
+      this.setData({
+        dialogList: tmpDialogList
+      })
+
+      if(tmpDialogList.length == 0) {
+        this.initCard()
+      }
   }
 
 
