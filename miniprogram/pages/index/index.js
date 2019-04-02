@@ -49,6 +49,7 @@ Page({
     recording: false,  // 正在录音
 
     toView: 'fake',  // 滚动位置
+    lastId: -1,    // dialogList 最后一个item的 id
     currentTranslateVoice: '', // 当前播放语音路径
     // 是否已获取用户信息
     logged: false
@@ -278,19 +279,43 @@ Page({
         return
       }
 
+      // 数组增加一个元素
+      let lastId = this.data.lastId + 1
+
       let currentData = Object.assign({}, this.data.currentTranslate, {
-        text: res.result,
-        translateText: '正在翻译中',
-        voicePath: res.tempFilePath
+        text: res.result, // 识别后文字
+        id: lastId,
+        temVoicePath: res.tempFilePath, // 录音临时文件
+        temVoiceDuration: res.duration, // 录音总时长
+        temFileSize: res.fireSize // 文件大小
       })
 
       this.setData({
         currentTranslate: currentData,
         recordStatus: 1,
-
+        lastId: lastId
       })
 
       this.scrollToNew();
+
+      let index = this.data.dialogList.length;
+      let tmpDialogList = this.data.dialogList.slice(0);
+
+      if(!isNaN(index)) {
+
+        // 数组加入新的元素
+        tmpDialogList[index] = currentData
+
+        this.setData({
+          dialogList: tmpDialogList,
+          recording: false,
+        })
+      } else {
+        console.error('index error', this.data.dialogList)
+      }
+
+      this.scrollToNew();
+
       // 上传语音
       // this.uploadRecoding(res)
       // this.addContent()

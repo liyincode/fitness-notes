@@ -14,7 +14,7 @@
                 </view>
             </view>
             <!-- 播放声音按钮 -->
-            <view class="play-icon" catchtap="playTranslateVoice" cattouchstart="palyTranslateVoice" wx:if="{{recordStatus == 2}}">
+            <view class="play-icon" catchtap="clickPlayVoice" catchtouchstart="clickPlayVoice" wx:if="{{recordStatus == 2}}">
                 <play-icon play-type="{{playType}}"></play-icon>
             </view>
         </view>

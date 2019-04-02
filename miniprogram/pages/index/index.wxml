@@ -1,5 +1,11 @@
 <view class="container">
-  <scroll-view id="scroll-content" class="dialog-part" scroll-top="{{scroll_top}}" scroll-y="true" enable-back-to-top="true" enable-back-to-top="true" scroll-with-animation="true">
+  <scroll-view id="scroll-content" 
+  class="dialog-part" 
+  scroll-top="{{scroll_top}}" 
+  scroll-y="true" 
+  scroll-into-view="translate-{{toView}}"
+  enable-back-to-top="true"  
+  scroll-with-animation="true">
     <!-- 当没有说话并且没有卡片列表时 -->
     <view class="dialog-wrap" id="translate-empty" wx:if="{{!recording && dialogList.length == 0}}">
       <result-bubble item="{{initTranslate}}" record-status="0"></result-bubble>
