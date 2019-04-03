@@ -3,7 +3,7 @@ const app = getApp()
 
 const util = require('../../utils/util.js')
 
-var base64 = require("../../images/base64");
+var base64 = require("../../images/base64")
 
 Page({
 
