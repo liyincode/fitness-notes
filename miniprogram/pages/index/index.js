@@ -16,16 +16,16 @@ Page({
    */
   data: {
     dialogList: [
-    //   {
-    //   // 当前语音输入内容
-    //   create: '04/27 15:37',
-    //   text: '这是测试这是测试这是测试这是测试',
-    //   translateText: 'this is test.this is test.this is test.this is test.',
-    //   temVoicePath: '',
-    //   temVoiceDuration: '',
-    //   temFileSize: '',
-    //   id: 0,
-    // },
+      //   {
+      //   // 当前语音输入内容
+      //   create: '04/27 15:37',
+      //   text: '这是测试这是测试这是测试这是测试',
+      //   translateText: 'this is test.this is test.this is test.this is test.',
+      //   temVoicePath: '',
+      //   temVoiceDuration: '',
+      //   temFileSize: '',
+      //   id: 0,
+      // },
     ],
 
     scroll_top: 10000, // 竖向滚动条位置
@@ -51,101 +51,11 @@ Page({
     lastId: -1,    // dialogList 最后一个item的 id
     currentTranslateVoice: '', // 当前播放语音路径
     // 是否已获取用户信息
-    logged: false
+    loggedIn: false,
+    userInfo: {}
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
 
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              this.setData({
-                avatarUrl: res.userInfo.avatarUrl,
-                userInfo: res.userInfo
-              })
-            }
-          })
-        }
-      }
-    })
-
-    // 初始化语音插件    
-    this.initRecord()
-
-    this.setData({
-      toView: this.data.toView
-    })
-
-    // 获取权限
-    app.getRecordAuth()
-
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-    this.scrollToNew();
-
-    this.initCard()
-
-    // 当打开还在翻译时，显示透明蒙层，不许触碰
-    if(this.data.recordStatus == 2) {
-      wx.showLoading({
-        mask: true
-      })
-    }
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  },
 
   /**
    * 获取用户基本信息 
@@ -212,10 +122,10 @@ Page({
    * 松开按钮结束语音识别
    */
   endStreamRecord: function (event) {
-    console.log('松开按钮结束语音识别',event)
+    console.log('松开按钮结束语音识别', event)
 
     // 防止重复触发 stop 函数
-    if(!this.data.recording || this.data.recordStatus != 0) {
+    if (!this.data.recording || this.data.recordStatus != 0) {
       // 当前不正在录音
       console.warn('has finished!')
       return
@@ -229,10 +139,10 @@ Page({
     })
   },
 
-    /**
-   * 重新滚动到底部
-   */
-  scrollToNew: function() {
+  /**
+ * 重新滚动到底部
+ */
+  scrollToNew: function () {
     // 弹出新输入语音框
     this.setData({
       toView: this.data.toView
@@ -286,11 +196,11 @@ Page({
 
     // 识别结束事件
     manager.onStop = (res) => {
-      console.log('识别结束',res)
+      console.log('识别结束', res)
 
       let text = res.result
 
-      if(text == '') {
+      if (text == '') {
         // 如果识别内容为空, 就显示「请说话」图示
         this.showRecordEmptyTip()
         return
@@ -318,7 +228,7 @@ Page({
       let index = this.data.dialogList.length;
       let tmpDialogList = this.data.dialogList.slice(0);
 
-      if(!isNaN(index)) {
+      if (!isNaN(index)) {
 
         // 数组加入新的元素
         tmpDialogList[index] = currentData
@@ -367,7 +277,7 @@ Page({
   /**
    * 识别内容为空时的反馈
    */
-  showRecordEmptyTip: function() {
+  showRecordEmptyTip: function () {
     this.setData({
       recording: false,
       bottomButtonDisable: false,
@@ -378,7 +288,7 @@ Page({
       icon: 'success',
       image: '/images/no_voice.png',
       duration: 1000,
-      success: function(res) {
+      success: function (res) {
         console.log(res);
       },
       fail: function (res) {
@@ -402,7 +312,7 @@ Page({
   /**
    * 删除卡片
    */
-  deleteItem: function(e) {
+  deleteItem: function (e) {
     console.log('删除卡片', e)
     let detail = e.detail
     let item = detail.item
@@ -411,14 +321,108 @@ Page({
     let arrIndex = detail.index
     tmpDialogList.splice(arrIndex, 1)
 
-      this.setData({
-        dialogList: tmpDialogList
-      })
+    this.setData({
+      dialogList: tmpDialogList
+    })
 
-      if(tmpDialogList.length == 0) {
-        this.initCard()
+    if (tmpDialogList.length == 0) {
+      this.initCard()
+    }
+  },
+
+  /**
+   * 初始化用户信息
+   */
+  initUserInfo: function () {
+    try {
+      let userInfo = wx.getStorageSync('userInfo')
+      if (userInfo) {
+        this.setData({
+          userInfo: userInfo,
+          loggedIn: true
+        })
       }
-  }
+    } catch (e) {
+      console.log(e)
+    }
 
+  },
 
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+
+    // 初始化语音插件    
+    this.initRecord()
+
+    this.setData({
+      toView: this.data.toView
+    })
+
+    // 获取权限
+    app.getRecordAuth()
+
+    this.initUserInfo()
+
+    console.log(this.data)
+  },
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+    this.scrollToNew();
+
+    this.initCard()
+
+    // 当打开还在翻译时，显示透明蒙层，不许触碰
+    if (this.data.recordStatus == 2) {
+      wx.showLoading({
+        mask: true
+      })
+    }
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+
+  },
 })

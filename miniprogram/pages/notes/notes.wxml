@@ -1,19 +1,21 @@
 <!-- miniprogram/pages/test/test.wxml -->
 <view class="page">
-<view class="page__bd">
-       <view class="weui-panel weui-panel_access">
-            <view class="weui-panel__bd">
-                <view  class="weui-media-box weui-media-box_appmsg" >
-                    <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <image class="weui-media-box__thumb" src="{{icon60}}" />
-                    </view>
-                    <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <view class="weui-media-box__title">Young!</view>
-                    </view>
-                </view>
-            </view>
+  <view class="page__bd">
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-panel__bd">
+        <view class="weui-media-box weui-media-box_appmsg" >
+        <button class="userinfo-btn" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">
+          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg" >
+            <image class="weui-media-box__thumb" src="{{userInfo.avatarUrl}}" />
+          </view>
+          </button>
+          <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+            <view class="weui-media-box__title">{{userInfo.nickName}}</view>
+          </view>
         </view>
-</view>
+      </view>
+    </view>
+  </view>
   <view class="page__bd">
     <view class="weui-cells__title">03/22 23:36</view>
     <view class="weui-cells weui-cells_after-title">

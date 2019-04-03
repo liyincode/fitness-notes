@@ -22,3 +22,16 @@
     border-bottom: 0.5rpx solid #e5e5e5;
     
   }
+
+  /* 覆盖样式 */
+  .userinfo-btn {
+    padding: 0 0 0 0;
+    margin-right: 4%;
+    font-size: 0rpx;
+    border-radius: none;
+    background-color: transparent;
+  }
+
+  .userinfo-btn::after {
+      border: none
+  }

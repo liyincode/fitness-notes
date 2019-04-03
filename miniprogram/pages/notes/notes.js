@@ -1,7 +1,8 @@
 // miniprogram/pages/test/test.js
 const app = getApp()
-var plugin = requirePlugin("WechatSI")
-let manager = plugin.getRecordRecognitionManager()
+
+const util = require('../../utils/util.js')
+
 var base64 = require("../../images/base64");
 
 Page({
@@ -10,15 +11,60 @@ Page({
    * 页面的初始数据
    */
   data: {
-    current: {
-      poster: 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000',
-      name: '此时此刻',
-      author: '许巍',
-      src: 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E06DCBDC9AB7C49FD713D632D313AC4858BACB8DDD29067D3C601481D36E62053BF8DFEAF74C0A5CCFADD6471160CAF3E6A&fromtag=46',
+
+    userInfo: {
+      avatarUrl: base64.icon60,
+      nickName: '请点击头像'
     },
-    audioAction: {
-      method: 'pause'
-    },
+    loggedIn: false, // 是否登录
+
+  },
+
+  /**
+   * 获取用户信息
+   */
+  bindGetUserInfo: function (e) {
+    console.log('用户信息', e)
+    // 未登录
+    if (!this.data.loggedIn && e.detail.userInfo) {
+      let empUserInfo = e.detail.userInfo
+      // let userInfo = {}
+      // userInfo.avatarUrl = empUserInfo.avatarUrl
+      // userInfo.city = empUserInfo.city
+      // userInfo.country = empUserInfo.country
+      // userInfo.gender = empUserInfo.gender
+      // userInfo.language = empUserInfo.language
+      // userInfo.nickName = empUserInfo.nickName
+      // userInfo.provice = empUserInfo.provice
+      this.setData({
+        userInfo: empUserInfo
+      })
+      // 将用户信息存入 storage
+      wx.setStorage({
+        key: 'userInfo',
+        data: this.data.userInfo
+      })
+    } else {
+      console.log('用户已登录或拒绝授权信息')
+    }
+
+  },
+
+  /**
+   * 初始化用户信息
+   */
+  initUserInfo: function () {
+    try {
+      let userInfo = wx.getStorageSync('userInfo')
+      if (userInfo) {
+        this.setData({
+          userInfo: userInfo,
+          loggedIn: true
+        })
+      }
+    } catch (e) {
+      console.log(e)
+    }
 
   },
 
@@ -30,6 +76,8 @@ Page({
       icon20: base64.icon20,
       icon60: base64.icon60
     });
+
+    this.initUserInfo();
   },
 
   /**

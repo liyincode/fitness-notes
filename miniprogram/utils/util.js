@@ -26,10 +26,16 @@ const formatNumber = n => {
   return n[1] ? n : '0' + n
 }
 
-
+/**
+ * 转化空字符串 
+ */
+function nvl(val){
+  return typeof(val) == "undefined" || val == null ? "" : val;
+}
 
 
 module.exports = {
   formatTime: formatTime,
   recordTime: recordTime,
+  nvl: nvl
 }
