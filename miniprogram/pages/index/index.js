@@ -349,9 +349,48 @@ Page({
   },
 
   /**
+   * 存储语音识别历史记录到 storage 
+   */
+  setHistory: function () {
+    try {
+      let dialogList = this.data.dialogList
+      wx.getStorageSync('history', dialogList)
+    } catch (e) {
+      console.error("setStorageSync setHistory failed")
+    }
+  },
+
+  /**
+   * 得到历史记录
+   */
+  getHistory: function () {
+    try {
+      let history = wx.getStorageSync('history')
+      if(history) {
+        let len = history.length;
+        let lastId = this.data.lastId
+        if(len > 0) {
+          lastId = history[len-1].id || -1;
+        }
+        this.setData({
+          dialogList: history,
+          toView: this.data.toView,
+          lastId: lastId
+        })
+      }
+    } catch (e) {
+      this.setData({
+        dialogList: []
+      })
+    }
+  },
+
+  /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+
+    this.getHistory()
 
     // 初始化语音插件    
     this.initRecord()
@@ -396,6 +435,7 @@ Page({
    */
   onHide: function () {
 
+    this.setHistory();
   },
 
   /**
