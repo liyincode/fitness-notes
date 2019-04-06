@@ -10,7 +10,7 @@
 	},
 	"appid": "wx447c2d8574455783",
 	"projectname": "fitness-notes",
-	"libVersion": "2.6.2",
+	"libVersion": "2.6.4",
 	"condition": {
 		"search": {
 			"current": -1,

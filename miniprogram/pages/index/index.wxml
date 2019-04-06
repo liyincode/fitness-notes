@@ -24,7 +24,7 @@
   <!-- 页脚 -->
   <view class="foot-group" catchlongpress="catchTapEvent">
     <view class="button-wrap">
-      <button class="weui-btn" disabled="{{bottomButtonDisabled}}" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
+      <button class="weui-btn" disabled="{{talkbtnDisabled}}" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
         请说话
       </button>
       <button class="weui-btn" type="default" loading="{{savebtnLoading}}" disabled="{{savebtnDisable}}" catchtap="saveContent">

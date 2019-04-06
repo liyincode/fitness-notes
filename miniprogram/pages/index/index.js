@@ -22,8 +22,6 @@ Page({
 
     scroll_top: 10000, // 竖向滚动条位置
 
-    bottomButtonDisable: false, // 说话按钮 disabled
-
     // 初始化卡片内容
     initTranslate: {
       // 为空时的卡片内容
@@ -44,8 +42,11 @@ Page({
     // 是否已获取用户信息
     loggedIn: false,
     userInfo: {},
+    
+    // 说话按钮状态
+    talkbtnDisabled: false,
 
-    // 保存按钮转态
+    // 保存按钮状态
     savebtnLoading: false,
     savebtnDisabled: false,
   },
@@ -70,23 +71,29 @@ Page({
    * 保存文字和语音 
    */
   saveContent: function (e) {
-    console.log('开始保存内容',e)
+
+    // 如果正在保存
+    if(this.data.savebtnDisabled) {
+      return
+    }
+
+    console.log('开始保存内容', e)
 
     // 初始化用户信息
     this.initUserInfo()
 
     // 判断是否用户已授权获取信息
-    if(!this.data.loggedIn) {
+    if (!this.data.loggedIn) {
       wx.showModal({
         title: '提示',
         content: '请点击右下角笔记页中的头像获取您的名称',
         showCancel: false
       })
       return
-    } 
+    }
 
     // 判断当前内容是否为空
-    if(this.data.dialogList.length <= 0) {
+    if (this.data.dialogList.length <= 0) {
       wx.showModal({
         title: '提示',
         content: '您没有内容可以保存哦',
@@ -97,66 +104,69 @@ Page({
 
     // 防止重复点击
     this.setData({
+      talkbtnDisabled: true,
       savebtnDisabled: true,
       savebtnLoading: true
     })
 
-    let dataArr = this.data.dialogList
-    dataArr.forEach(item => {
-      // 将资源保存在资源表
-    db.collection('resource').add({
-      data: {
-        resource_type: [1, 3], // 资源类型：文字，录音
-        text: item.text, // 录音识别后文字
-        temFilePath: item.temVoicePath, // 临时录音路径
-        temFileDuration: item.temVoiceDuration, // 临时录音时长
-        temFileSize: item.temFileSize, // 临时录音文件大小
-        create_at: db.serverDate(), // 创建时间 
-      },
-      success: res => {
-        // 在返回结果中会包含新创建的记录的 _id
-        console.log('[resource] [新增记录] 成功，记录 _id: ', res._id)
-        let resourceId = res._id
-
-        // 将内容保存到 content 表中
-        db.collection('content').add({
+    let _this = this;
+    let promises = new Promise(function (resolve, reject) {
+      let dataArr = _this.data.dialogList
+      dataArr.forEach(function(item, index) {
+        // 将资源保存在资源表
+        db.collection('resource').add({
           data: {
-            resource_id: resourceId, // 资源文件 Id
-            feeling_type: [1, 3], // 感受类型：文字，录音
-            created_at: db.serverDate() // 创建时间
-          },
-          success: res => {
-            wx.showToast({
-              title: '保存成功',
-            })
-            console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
-          },
-          fail: err => {
-            wx.showToast({
-              icon: 'none',
-              title: '保存失败'
-            })
-            console.error('[content] [新增记录] 失败：', err)
-          
+            resource_type: [1, 3], // 资源类型：文字，录音
+            text: item.text, // 录音识别后文字
+            temFilePath: item.temVoicePath, // 临时录音路径
+            temFileDuration: item.temVoiceDuration, // 临时录音时长
+            temFileSize: item.temFileSize, // 临时录音文件大小
+            create_at: db.serverDate(), // 创建时间 
           }
         })
-        
-      },
-      fail: err => {
-        wx.showToast({
-          icon: 'none',
-          title: '保存失败'
-        })
-        console.error('[数据库] [新增记录] 失败：', err)
-
-      }
-    })
-    })
-
+          .then(res => {
+            // console.log(res)
+            // 在返回结果中会包含新创建的记录的 _id
+            console.log('[resource] [新增记录] 成功，记录 _id: ', res._id)
+            let resourceId = res._id
+  
+            // 将内容保存到 content 表中
+            db.collection('content').add({
+              data: {
+                resource_id: resourceId, // 资源文件 Id
+                feeling_type: [1, 3], // 感受类型：文字，录音
+                created_at: db.serverDate() // 创建时间
+              }
+            })
+              .then(res => {
+                console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
+                if(index == dataArr.length - 1){
+                  resolve(true)
+                }
+              })
+          })
+      })
+    }) 
+    promises.then((value) => {
+    // 将本地与缓存中内容清空
+    console.log('promise 新增完成',value)
     this.setData({
-      savebtnDisabled: true,
+      dialogList: []
+    })
+    this.emptyHistory()
+
+    wx.showToast({
+      title: '保存成功',
+    })
+    this.setData({
+      talkbtnDisabled: false,
+      savebtnDisabled: false,
       savebtnLoading: false
     })
+
+    })
+
+
 
   },
 
@@ -164,6 +174,12 @@ Page({
   * 按住按钮开始语音识别
   */
   streamRecord: function (event) {
+
+    // 如果正在保存，就返回
+    if(this.data.savebtnDisabled) {
+      return
+    }
+
     console.log("触摸开始", event)
 
     manager.start()
@@ -197,7 +213,7 @@ Page({
 
     // 说话按钮禁止
     this.setData({
-      bottomButtonDisable: true,
+      talkbtnDisabled: false,
     })
   },
 
@@ -315,13 +331,13 @@ Page({
       console.log(res)
       this.setData({
         recording: false,
-        bottomButtonDisable: false
+        talkbtnDisabled: false
       })
     }
 
     // 有新的识别内容返回，则会调用此事件
     manager.onRecognize = (res) => {
-      console.log('有新的内容识别返回',res)
+      console.log('有新的内容识别返回', res)
       // 将所有可枚举属性的值从一个或多个源对象复制到目标对象。它将返回目标对象。
       let currentData = Object.assign({}, this.data.currentTranslate, {
         text: res.result,
@@ -342,7 +358,7 @@ Page({
   showRecordEmptyTip: function () {
     this.setData({
       recording: false,
-      bottomButtonDisable: false,
+      talkbtnDisabled: false,
     })
 
     wx.showToast({
@@ -428,10 +444,10 @@ Page({
   getHistory: function () {
     try {
       let history = wx.getStorageSync('history')
-      if(history) {
+      if (history) {
         let len = history.length;
         //let lastId = this.data.lastId
-        if(len > 0) {
+        if (len > 0) {
           //lastId = history[len-1].id || -1;
         }
         this.setData({
@@ -439,6 +455,27 @@ Page({
           toView: this.data.toView,
           //lastId: lastId
         })
+      }
+    } catch (e) {
+      this.setData({
+        dialogList: []
+      })
+    }
+  },
+
+  /**
+   * 清空历史记录 
+   */
+  emptyHistory: function () {
+    try {
+      let history = wx.getStorageSync('history')
+      if (history) {
+        let len = history.length;
+        if (len > 0) {
+          this.setData({
+            dialogList: []
+          })
+        }
       }
     } catch (e) {
       this.setData({
