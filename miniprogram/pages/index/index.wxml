@@ -27,7 +27,7 @@
       <button class="weui-btn" disabled="{{bottomButtonDisabled}}" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
         请说话
       </button>
-      <button class="weui-btn" type="default" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+      <button class="weui-btn" type="default" loading="{{savebtnLoading}}" disabled="{{savebtnDisable}}" catchtap="saveContent">
         点击保存
       </button>
     </view>

@@ -8,6 +8,7 @@ import { conf } from '../../utils/conf.js'
 
 const manager = plugin.getRecordRecognitionManager()
 
+const db = wx.cloud.database()
 
 Page({
 
@@ -16,16 +17,7 @@ Page({
    */
   data: {
     dialogList: [
-      //   {
-      //   // 当前语音输入内容
-      //   create: '04/27 15:37',
-      //   text: '这是测试这是测试这是测试这是测试',
-      //   translateText: 'this is test.this is test.this is test.this is test.',
-      //   temVoicePath: '',
-      //   temVoiceDuration: '',
-      //   temFileSize: '',
-      //   id: 0,
-      // },
+
     ],
 
     scroll_top: 10000, // 竖向滚动条位置
@@ -48,11 +40,14 @@ Page({
     recording: false,  // 正在录音
 
     toView: 'fake',  // 滚动位置
-    lastId: -1,    // dialogList 最后一个item的 id
     currentTranslateVoice: '', // 当前播放语音路径
     // 是否已获取用户信息
     loggedIn: false,
-    userInfo: {}
+    userInfo: {},
+
+    // 保存按钮转态
+    savebtnLoading: false,
+    savebtnDisabled: false,
   },
 
 
@@ -74,28 +69,95 @@ Page({
   /**
    * 保存文字和语音 
    */
-  addContent: function () {
-    console.log(e)
-    const db = wx.cloud.database()
-    db.collection('content').add({
+  saveContent: function (e) {
+    console.log('开始保存内容',e)
+
+    // 初始化用户信息
+    this.initUserInfo()
+
+    // 判断是否用户已授权获取信息
+    if(!this.data.loggedIn) {
+      wx.showModal({
+        title: '提示',
+        content: '请点击右下角笔记页中的头像获取您的名称',
+        showCancel: false
+      })
+      return
+    } 
+
+    // 判断当前内容是否为空
+    if(this.data.dialogList.length <= 0) {
+      wx.showModal({
+        title: '提示',
+        content: '您没有内容可以保存哦',
+        showCancel: false
+      })
+      return
+    }
+
+    // 防止重复点击
+    this.setData({
+      savebtnDisabled: true,
+      savebtnLoading: true
+    })
+
+    let dataArr = this.data.dialogList
+    dataArr.forEach(item => {
+      // 将资源保存在资源表
+    db.collection('resource').add({
       data: {
-        text: this.text
+        resource_type: [1, 3], // 资源类型：文字，录音
+        text: item.text, // 录音识别后文字
+        temFilePath: item.temVoicePath, // 临时录音路径
+        temFileDuration: item.temVoiceDuration, // 临时录音时长
+        temFileSize: item.temFileSize, // 临时录音文件大小
+        create_at: db.serverDate(), // 创建时间 
       },
       success: res => {
         // 在返回结果中会包含新创建的记录的 _id
-        wx.showToast({
-          title: '新增记录成功',
+        console.log('[resource] [新增记录] 成功，记录 _id: ', res._id)
+        let resourceId = res._id
+
+        // 将内容保存到 content 表中
+        db.collection('content').add({
+          data: {
+            resource_id: resourceId, // 资源文件 Id
+            feeling_type: [1, 3], // 感受类型：文字，录音
+            created_at: db.serverDate() // 创建时间
+          },
+          success: res => {
+            wx.showToast({
+              title: '保存成功',
+            })
+            console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
+          },
+          fail: err => {
+            wx.showToast({
+              icon: 'none',
+              title: '保存失败'
+            })
+            console.error('[content] [新增记录] 失败：', err)
+          
+          }
         })
-        console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
+        
       },
       fail: err => {
         wx.showToast({
           icon: 'none',
-          title: '新增记录失败'
+          title: '保存失败'
         })
         console.error('[数据库] [新增记录] 失败：', err)
+
       }
     })
+    })
+
+    this.setData({
+      savebtnDisabled: true,
+      savebtnLoading: false
+    })
+
   },
 
   /**
@@ -207,11 +269,11 @@ Page({
       }
 
       // 数组增加一个元素
-      let lastId = this.data.lastId + 1
+      //let lastId = this.data.lastId + 1
 
       let currentData = Object.assign({}, this.data.currentTranslate, {
         text: res.result, // 识别后文字
-        id: lastId,
+        //id: lastId,
         temVoicePath: res.tempFilePath, // 录音临时文件
         temVoiceDuration: res.duration, // 录音总时长
         temFileSize: res.fileSize // 文件大小
@@ -220,7 +282,7 @@ Page({
       this.setData({
         currentTranslate: currentData,
         recordStatus: 1,
-        lastId: lastId
+        //lastId: lastId
       })
 
       this.scrollToNew();
@@ -259,7 +321,7 @@ Page({
 
     // 有新的识别内容返回，则会调用此事件
     manager.onRecognize = (res) => {
-      console.log(res)
+      console.log('有新的内容识别返回',res)
       // 将所有可枚举属性的值从一个或多个源对象复制到目标对象。它将返回目标对象。
       let currentData = Object.assign({}, this.data.currentTranslate, {
         text: res.result,
@@ -368,14 +430,14 @@ Page({
       let history = wx.getStorageSync('history')
       if(history) {
         let len = history.length;
-        let lastId = this.data.lastId
+        //let lastId = this.data.lastId
         if(len > 0) {
-          lastId = history[len-1].id || -1;
+          //lastId = history[len-1].id || -1;
         }
         this.setData({
           dialogList: history,
           toView: this.data.toView,
-          lastId: lastId
+          //lastId: lastId
         })
       }
     } catch (e) {

@@ -7,7 +7,7 @@
     <view class="create-time">{{item.create}}</view>
     <view class="section-body" data-index="{{index}}">
         <view class="send-message">
-            <view data-id="{{item.id}}" class="text-content" data-index="{{index}}">
+            <view class="text-content" data-index="{{index}}">
                 <view class="text-detail text-detail-{{item.lfrom}}">
                     {{item.text}}
                     <waiting-icon wx:if="{{recordStatus == 0}}"></waiting-icon>
