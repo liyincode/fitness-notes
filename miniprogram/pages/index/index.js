@@ -42,7 +42,7 @@ Page({
     // 是否已获取用户信息
     loggedIn: false,
     userInfo: {},
-    
+
     // 说话按钮状态
     talkbtnDisabled: false,
 
@@ -73,7 +73,7 @@ Page({
   saveContent: function (e) {
 
     // 如果正在保存
-    if(this.data.savebtnDisabled) {
+    if (this.data.savebtnDisabled) {
       return
     }
 
@@ -111,8 +111,48 @@ Page({
 
     let _this = this;
     let promises = new Promise(function (resolve, reject) {
+      // 获取当前用户 openid
+      wx.cloud.callFunction({
+        name: 'login',
+        complete: res => {
+          console.log('callFunction login result: ', res)
+          let openid = res.result.openid
+          db.collection('user').where({
+            _openid: openid // 填入当前用户 openid
+          }).get({
+            success(res) {
+              console.log('通过 openid 获取用户信息成功', res.data)
+              // 如果用户表中没有此用户就存入
+              if (res.data.length == 0) {
+                // 保存用户信息
+                let userInfo = _this.data.userInfo
+                db.collection('user').add({
+                  data: {
+                    nickName: userInfo.nickName, // 昵称
+                    avatarUrl: userInfo.avatarUrl, // 头像
+                    gender: userInfo.gender, // 性别
+                    province: userInfo.province, // 省份
+                    country: userInfo.country, // 城市
+                    city: userInfo.city, // 城市
+                    language: userInfo.language, // 语言
+                    created_at: db.serverDate() // 创建时间
+                  }
+                })
+                  .then(res => {
+                    console.log('[user] [新增记录] 成功，记录 _id: ', res._id)
+                  })
+              }
+            },
+            fail(res) {
+              console.log('通过 openid 获取用户信息失败', res)
+            }
+          })
+
+        }
+      })
+
       let dataArr = _this.data.dialogList
-      dataArr.forEach(function(item, index) {
+      dataArr.forEach(function (item, index) {
         // 将资源保存在资源表
         db.collection('resource').add({
           data: {
@@ -129,7 +169,7 @@ Page({
             // 在返回结果中会包含新创建的记录的 _id
             console.log('[resource] [新增记录] 成功，记录 _id: ', res._id)
             let resourceId = res._id
-  
+
             // 将内容保存到 content 表中
             db.collection('content').add({
               data: {
@@ -140,34 +180,31 @@ Page({
             })
               .then(res => {
                 console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
-                if(index == dataArr.length - 1){
+                if (index == dataArr.length - 1) {
                   resolve(true)
                 }
               })
           })
       })
-    }) 
+    })
     promises.then((value) => {
-    // 将本地与缓存中内容清空
-    console.log('promise 新增完成',value)
-    this.setData({
-      dialogList: []
+      // 将本地与缓存中内容清空
+      console.log('promise 新增完成', value)
+      this.setData({
+        dialogList: []
+      })
+      this.emptyHistory()
+
+      wx.showToast({
+        title: '保存成功',
+      })
+      this.setData({
+        talkbtnDisabled: false,
+        savebtnDisabled: false,
+        savebtnLoading: false
+      })
+
     })
-    this.emptyHistory()
-
-    wx.showToast({
-      title: '保存成功',
-    })
-    this.setData({
-      talkbtnDisabled: false,
-      savebtnDisabled: false,
-      savebtnLoading: false
-    })
-
-    })
-
-
-
   },
 
   /**
@@ -176,7 +213,7 @@ Page({
   streamRecord: function (event) {
 
     // 如果正在保存，就返回
-    if(this.data.savebtnDisabled) {
+    if (this.data.savebtnDisabled) {
       return
     }
 

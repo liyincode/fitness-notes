@@ -28,14 +28,6 @@ Page({
     // 未登录
     if (!this.data.loggedIn && e.detail.userInfo) {
       let empUserInfo = e.detail.userInfo
-      // let userInfo = {}
-      // userInfo.avatarUrl = empUserInfo.avatarUrl
-      // userInfo.city = empUserInfo.city
-      // userInfo.country = empUserInfo.country
-      // userInfo.gender = empUserInfo.gender
-      // userInfo.language = empUserInfo.language
-      // userInfo.nickName = empUserInfo.nickName
-      // userInfo.provice = empUserInfo.provice
       this.setData({
         userInfo: empUserInfo
       })
