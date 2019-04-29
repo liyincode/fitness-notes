@@ -6,6 +6,8 @@ const plugin = requirePlugin("WechatSI")
 
 import { conf } from '../../utils/conf.js'
 
+// import { getEtag } from '../../utils/qetag.js'
+
 const manager = plugin.getRecordRecognitionManager()
 
 const db = wx.cloud.database()
@@ -71,6 +73,7 @@ Page({
      * 保存文字和语音 
      */
     saveContent: function(e) {
+        console.log(this.data.dialogList)
 
         // 如果正在保存
         if (this.data.savebtnDisabled) {
@@ -150,12 +153,45 @@ Page({
             }
         })
 
-        let dataArr = _this.data.dialogList
-            // 上传
+        let finishedArry = [];
+        let dataArr = this.data.dialogList;
         dataArr.forEach(function(item, index) {
-            let fileID = _this.uploadRecoding(item.temVoicePath)
-            console.log('上传文件后的 fileID', fileID)
+            let data = {}
+            data.recording = item;
+            finishedArry.push(data);
         })
+        console.log("合并后的数组", finishedArry);
+
+        // 保存语音
+        db.collection('content').add({
+                data: {
+                    created_at: db.serverDate(), // 创建时间
+                    content: finishedArry
+                }
+            })
+            .then(res => {
+                console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
+                this.setData({
+                    dialogList: []
+                })
+                this.emptyHistory()
+
+                wx.showToast({
+                    title: '保存成功',
+                })
+                this.setData({
+                    talkbtnDisabled: false,
+                    savebtnDisabled: false,
+                    savebtnLoading: false
+                })
+            })
+            .catch(console.error)
+
+        //上传语音
+        // finishedArry.forEach(function(item, index) {
+        //     let fileID = _this.uploadRecoding(item.recording.temVoicePath)
+        //     console.log('上传文件后的 fileID', fileID)
+        // })
 
     },
 
@@ -222,17 +258,19 @@ Page({
      */
     uploadRecoding: function(tempFilePath) {
 
-        console.log('开始上传语音', tempFilePath, _id)
+        console.log('开始上传语音', tempFilePath)
             /**
              * 开始上传语音
              */
             // wx.showLoading({
             //   title: '上传语音中',
             // })
-
+        getEtag(tempFilePath, function(e) {
+            console.log(e)
+        })
         const filePath = tempFilePath
 
-        const cloudPath = 'recording/'
+        const cloudPath = 'recording/' + filename + filePath.match(/\.[^.]+?$/)[0]
         wx.cloud.uploadFile({
                 cloudPath,
                 filePath,
@@ -547,5 +585,6 @@ Page({
      */
     onShareAppMessage: function() {
 
-    },
+    }
+
 })
