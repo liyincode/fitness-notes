@@ -17,9 +17,18 @@ Page({
       nickName: '请点击头像'
     },
     loggedIn: false, // 是否登录
-
+    activeName: ['1']
   },
-
+  showModal(e) {
+    this.setData({
+      modalName: e.currentTarget.dataset.target
+    })
+  },
+  hideModal(e) {
+    this.setData({
+      modalName: null
+    })
+  },
   /**
    * 获取用户信息
    */
@@ -40,6 +49,12 @@ Page({
       console.log('用户已登录或拒绝授权信息')
     }
 
+  },
+
+  onChange(event) {
+    this.setData({
+      activeNames: event.detail
+    });
   },
 
   /**

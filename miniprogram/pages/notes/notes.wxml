@@ -1,55 +1,54 @@
 <!-- miniprogram/pages/test/test.wxml -->
 <view class="page">
-  <view class="page__bd">
-    <view class="weui-panel weui-panel_access">
-      <view class="weui-panel__bd">
-        <view class="weui-media-box weui-media-box_appmsg" >
-        <button class="userinfo-btn" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">
-          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg" >
-            <image class="weui-media-box__thumb" src="{{userInfo.avatarUrl}}" />
-          </view>
-          </button>
-          <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-            <view class="weui-media-box__title">{{userInfo.nickName}}</view>
-          </view>
-        </view>
-      </view>
+  <view class="padding bg-white">
+    <view class="flex align-center">
+      <button class="cu-btn userinfo-btn" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"></button>
+      <view class="cu-avatar xl round" style="background-image:url({{userInfo.avatarUrl}})" />
+      <view class="margin-left text-lg">{{userInfo.nickName}}</view>
     </view>
   </view>
-  <view class="page__bd">
-    <view class="weui-cells__title">03/22 23:36</view>
-    <view class="weui-cells weui-cells_after-title">
-      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-        <view class="weui-cell__hd">
-          <image src="{{icon}}" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+  <scroll-view scroll-y="true">
+    <block wx:for="123">
+      <view class="cu-bar bg-white solid-bottom margin-top">
+        <view class="action">
+          <text class="cuIcon-title text-orange "></text>
+          4/29 12:57
         </view>
-        <view class="weui-cell__bd">cell standard</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">说明文字</view>
-      </navigator>
-      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-        <view class="weui-cell__hd">
-          <image src="/images/play.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
+      </view>
+      <view class="cu-list menu ">
+        <block wx:for="123">
+          <view class="cu-item">
+            <view class="content text-cut">
+              <text class="cuIcon-voice text-green"></text>
+              <text class="text-gray">去玩儿无群二无群二群无若无群二额无群若群翁让我签二无群二无群二</text>
+            </view>
+            <view class="action">
+              <!-- <button class="cu-btn round bg-green shadow ">
+              <text class="cuIcon-upload"></text>
+              播放
+            </button> -->
+              <button class="cu-btn icon">
+                <text class="cuIcon-playfill"></text>
+              </button>
+              <button class="cu-btn round bg-cyan shadow margin-left" bindtap="showModal" data-target="Modal">
+                <text class="cuIcon-upload"></text>
+                详情
+              </button>
+            </view>
+          </view>
+        </block>
+      </view>
+    </block>
+  </scroll-view>
+  <view class="cu-modal {{modalName=='Modal'?'show':''}}">
+    <view class="cu-dialog">
+      <view class="cu-bar bg-white justify-end">
+        <view class="content">Modal标题</view>
+        <view class="action" bindtap="hideModal">
+          <text class="cuIcon-close text-red"></text>
         </view>
-        <view class="weui-cell__bd">cell standard</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">00:00</view>
-      </navigator>
-    </view>
-    <view class="weui-cells__title">03/22 23:36</view>
-    <view class="weui-cells weui-cells_after-title">
-      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-        <view class="weui-cell__hd">
-          <image src="/images/pause.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
-        </view>
-        <view class="weui-cell__bd">cell standard</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">00:00</view>
-      </navigator>
-      <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
-        <view class="weui-cell__hd">
-          <image src="/images/play.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image>
-        </view>
-        <view class="weui-cell__bd text-desc">练完之后肩膀很疼痛，然后腿也疼，浑身都疼痛</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">00:00</view>
-      </navigator>
+      </view>
+      <view class="padding-xl">Modal 内容。</view>
     </view>
   </view>
 </view>

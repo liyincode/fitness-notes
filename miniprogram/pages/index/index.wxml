@@ -1,11 +1,5 @@
 <view class="container">
-  <scroll-view id="scroll-content" 
-  class="dialog-part" 
-  scroll-top="{{scroll_top}}" 
-  scroll-y="true" 
-  scroll-into-view="translate-{{toView}}"
-  enable-back-to-top="true"  
-  scroll-with-animation="true">
+  <scroll-view id="scroll-content" class="dialog-part" scroll-top="{{scroll_top}}" scroll-y="true" scroll-into-view="translate-{{toView}}" enable-back-to-top="true" scroll-with-animation="true">
     <!-- 当没有说话并且没有卡片列表时 -->
     <view class="dialog-wrap" id="translate-empty" wx:if="{{!recording && dialogList.length == 0}}">
       <result-bubble item="{{initTranslate}}" record-status="0"></result-bubble>
@@ -19,15 +13,22 @@
       <result-bubble item="{{currentTranslate}}" record-status="{{recordStatus}}"></result-bubble>
     </view>
     <view id="translate-fake"></view>
-
   </scroll-view>
   <!-- 页脚 -->
   <view class="foot-group" catchlongpress="catchTapEvent">
-    <view class="button-wrap">
+    <!-- <view class="button-wrap">
       <button class="weui-btn" disabled="{{talkbtnDisabled}}" type="primary" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
         请说话
       </button>
       <button class="weui-btn" type="default" loading="{{savebtnLoading}}" disabled="{{savebtnDisable}}" catchtap="saveContent">
+        点击保存
+      </button>
+    </view> -->
+    <view class="padding flex flex-direction">
+      <button class="cu-btn bg-green lg" disabled="{{talkbtnDisabled}}" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
+        请说话
+      </button>
+      <button class="cu-btn text-green line-green  margin-tb-sm lg" loading="{{savebtnLoading}}" disabled="{{savebtnDisable}}" catchtap="saveContent">
         点击保存
       </button>
     </view>

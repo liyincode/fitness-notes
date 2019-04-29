@@ -1,5 +1,5 @@
 {
-  "usingComponents": {
-    "result-bubble": "/components/result-bubble/index"
-  }
+    "usingComponents": {
+        "result-bubble": "/components/result-bubble/index"
+    }
 }

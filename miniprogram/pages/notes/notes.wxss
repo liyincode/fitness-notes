@@ -1,37 +1,10 @@
-/* miniprogram/pages/test/test.wxss */
-.text-desc {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+/* 头像按钮 */
+
+.userinfo-btn {
+    height: 128rpx;
+    width: 128rpx;
+    border-radius: 5000rpx;
+    opacity: 0;
+    position: absolute;
+    z-index: 1;
 }
-
-.weui-media-box {
-    padding: 34px 16px;
-}
-
-.weui-media-box__thumb {
-    border-radius: 5px;
-}
-
-.weui-panel:before {
-    border-top: none;
-    
-  }
-  
-  .weui-panel:after {
-    border-bottom: 0.5rpx solid #e5e5e5;
-    
-  }
-
-  /* 覆盖样式 */
-  .userinfo-btn {
-    padding: 0 0 0 0;
-    margin-right: 4%;
-    font-size: 0rpx;
-    border-radius: none;
-    background-color: transparent;
-  }
-
-  .userinfo-btn::after {
-      border: none
-  }
