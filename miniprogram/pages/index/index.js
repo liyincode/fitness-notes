@@ -42,8 +42,8 @@ Page({
         toView: 'fake', // 滚动位置
         currentTranslateVoice: '', // 当前播放语音路径
         // 是否已获取用户信息
-        loggedIn: false,
         userInfo: {},
+        openid: "",
 
         // 说话按钮状态
         talkbtnDisabled: false,
@@ -54,25 +54,12 @@ Page({
     },
 
 
-
-    /**
-     * 获取用户基本信息 
-     */
-    onGetUserInfo: function(e) {
-        console.log(e)
-        if (!this.logged && e.detail.userInfo) {
-            this.setData({
-                logged: true,
-                avatarUrl: e.detail.userInfo.avatarUrl,
-                userInfo: e.detail.userInfo
-            })
-        }
-    },
-
     /**
      * 保存文字和语音 
      */
     saveContent: function(e) {
+
+        console.log('开始保存内容')
         console.log(this.data.dialogList)
 
         // 如果正在保存
@@ -80,13 +67,8 @@ Page({
             return
         }
 
-        console.log('开始保存内容', e)
-
-        // 初始化用户信息
-        this.initUserInfo()
-
         // 判断是否用户已授权获取信息
-        if (!this.data.loggedIn) {
+        if (!this.data.userInfo) {
             wx.showModal({
                 title: '提示',
                 content: '请点击右下角笔记页中的头像获取您的名称',
@@ -107,75 +89,16 @@ Page({
 
         // 防止重复点击
         this.setData({
-            talkbtnDisabled: true,
-            savebtnDisabled: true,
-            savebtnLoading: true
-        })
-
-        let _this = this;
-        // 获取当前用户 openid
-        wx.cloud.callFunction({
-            name: 'login',
-            complete: res => {
-                console.log('callFunction login result: ', res)
-                let openid = res.result.openid
-                db.collection('user').where({
-                    _openid: openid // 填入当前用户 openid
-                }).get({
-                    success(res) {
-                        console.log('通过 openid 获取用户信息成功', res.data)
-                            // 如果用户表中没有此用户就存入
-                        if (res.data.length == 0) {
-                            // 保存用户信息
-                            let userInfo = _this.data.userInfo
-                            db.collection('user').add({
-                                    data: {
-                                        nickName: userInfo.nickName, // 昵称
-                                        avatarUrl: userInfo.avatarUrl, // 头像
-                                        gender: userInfo.gender, // 性别
-                                        province: userInfo.province, // 省份
-                                        country: userInfo.country, // 城市
-                                        city: userInfo.city, // 城市
-                                        language: userInfo.language, // 语言
-                                        created_at: db.serverDate() // 创建时间
-                                    }
-                                })
-                                .then(res => {
-                                    console.log('[user] [新增记录] 成功，记录 _id: ', res._id)
-                                })
-                        }
-                    },
-                    fail(res) {
-                        console.log('通过 openid 获取用户信息失败', res)
-                    }
-                })
-
-            }
-        })
-
-        let finishedArry = [];
-        let dataArr = this.data.dialogList;
-        dataArr.forEach(function(item, index) {
-            let data = {}
-            data.recording = item;
-            finishedArry.push(data);
-        })
-        console.log("合并后的数组", finishedArry);
-
-        // 保存语音
-        db.collection('content').add({
-                data: {
-                    created_at: db.serverDate(), // 创建时间
-                    content: finishedArry
-                }
+                talkbtnDisabled: true,
+                savebtnDisabled: true,
+                savebtnLoading: true
             })
-            .then(res => {
-                console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
-                this.setData({
-                    dialogList: []
-                })
-                this.emptyHistory()
-
+            // 上传语音文件
+        this.uploadRecoding().then((value) => {
+            console.log(value)
+                // 保存内容
+            this.uploadContent().then((value) => {
+                console.log(value)
                 wx.showToast({
                     title: '保存成功',
                 })
@@ -185,13 +108,11 @@ Page({
                     savebtnLoading: false
                 })
             })
-            .catch(console.error)
+        })
 
-        //上传语音
-        // finishedArry.forEach(function(item, index) {
-        //     let fileID = _this.uploadRecoding(item.recording.temVoicePath)
-        //     console.log('上传文件后的 fileID', fileID)
-        // })
+
+
+
 
     },
 
@@ -252,35 +173,129 @@ Page({
             toView: this.data.toView
         })
     },
+    /**
+     * 
+     */
+    uploadContent: function() {
+        return new Promise((resolve, reject) => {
 
+            let _this = this;
+            let openid = this.data.openid
+            db.collection('user').where({
+                _openid: openid // 填入当前用户 openid
+            }).get({
+                success(res) {
+                    console.log('通过 openid 获取用户信息成功', res.data)
+                        // 如果用户表中没有此用户就存入
+                    if (res.data.length == 0) {
+                        // 保存用户信息
+                        let userInfo = _this.data.userInfo
+                        db.collection('user').add({
+                                data: {
+                                    nickName: userInfo.nickName, // 昵称
+                                    avatarUrl: userInfo.avatarUrl, // 头像
+                                    gender: userInfo.gender, // 性别
+                                    province: userInfo.province, // 省份
+                                    country: userInfo.country, // 城市
+                                    city: userInfo.city, // 城市
+                                    language: userInfo.language, // 语言
+                                    created_at: db.serverDate() // 创建时间
+                                }
+                            })
+                            .then(res => {
+                                console.log('[user] [新增记录] 成功，记录 _id: ', res._id)
+                            })
+                    }
+                },
+                fail(res) {
+                    console.log('通过 openid 获取用户信息失败', res)
+                }
+            })
+
+            let finishedArry = [];
+            let dataArr = this.data.dialogList;
+            dataArr.forEach(function(item, index) {
+                let data = {}
+                data.recording = item;
+                finishedArry.push(data);
+            })
+            console.log("合并后的数组", finishedArry);
+
+            // 保存语音
+            db.collection('content').add({
+                    data: {
+                        created_at: db.serverDate(), // 创建时间
+                        content: finishedArry
+                    }
+                })
+                .then(res => {
+                    console.log('[content] [新增记录] 成功，记录 _id: ', res._id)
+                    this.setData({
+                        dialogList: []
+                    })
+                    this.emptyHistory()
+                    resolve("保存内容成功！")
+                })
+                .catch(console.error)
+
+        })
+    },
     /**
      * 上传语音
      */
-    uploadRecoding: function(tempFilePath) {
+    uploadRecoding: function() {
+        return new Promise((resolve, reject) => {
 
-        console.log('开始上传语音', tempFilePath)
-            /**
-             * 开始上传语音
-             */
-            // wx.showLoading({
-            //   title: '上传语音中',
-            // })
-        getEtag(tempFilePath, function(e) {
-            console.log(e)
+            console.log('开始上传语音...')
+            let dataArr = this.data.dialogList;
+            let finished = []
+            let _this = this
+            dataArr.forEach(function(item, index) {
+                console.log(item)
+                let filePath = item.temVoicePath
+                    // var fileName = Date.parse(new Date())
+                wx.getFileInfo({
+                    filePath,
+                    success(res) {
+                        // console.log(res)
+                        // console.log(res.size)
+                        // console.log(res.digest)
+                        let fileName = res.digest
+                        let cloudPath = 'recording/' + fileName + filePath.match(/\.[^.]+?$/)[0]
+                            //console.log('cloudPath', cloudPath)
+                        wx.cloud.uploadFile({
+                                cloudPath,
+                                filePath,
+                            })
+                            .then(res => {
+                                console.log('[上传文件] 成功：', res)
+                                let result = {}
+                                result.fileID = res.fileID
+                                result.tempFilePath = filePath
+                                finished.push(result)
+                                console.log("dataArr", dataArr.length)
+                                if (finished.length == dataArr.length) {
+                                    for (let i = 0; i < finished.length; i++) {
+                                        for (let t = 0; t < dataArr.length; t++) {
+                                            if (finished[i].tempFilePath == dataArr[t].temVoicePath) {
+                                                dataArr[t].fileID = finished[i].fileID
+                                            }
+                                        }
+                                    }
+                                    _this.setData({
+                                        dialogList: dataArr
+                                    })
+                                    resolve('全部上传成功！')
+                                }
+
+                            }).catch(error => {
+                                // handle error
+                            })
+                    }
+                })
+
+            })
         })
-        const filePath = tempFilePath
-
-        const cloudPath = 'recording/' + filename + filePath.match(/\.[^.]+?$/)[0]
-        wx.cloud.uploadFile({
-                cloudPath,
-                filePath,
-            })
-            .then(res => {
-                console.log('[上传文件] 成功：', res)
-                return res.fileID
-            }).catch(error => {
-                // handle error
-            })
     },
 
     /**
@@ -431,24 +446,6 @@ Page({
     },
 
     /**
-     * 初始化用户信息
-     */
-    initUserInfo: function() {
-        try {
-            let userInfo = wx.getStorageSync('userInfo')
-            if (userInfo) {
-                this.setData({
-                    userInfo: userInfo,
-                    loggedIn: true
-                })
-            }
-        } catch (e) {
-            console.log(e)
-        }
-
-    },
-
-    /**
      * 存储语音识别历史记录到 storage 
      */
     setHistory: function() {
@@ -464,6 +461,9 @@ Page({
      * 得到历史记录
      */
     getHistory: function() {
+        wx.showLoading({
+            title: '加载中',
+        })
         try {
             let history = wx.getStorageSync('history')
             if (history) {
@@ -477,11 +477,14 @@ Page({
                     toView: this.data.toView,
                     //lastId: lastId
                 })
+
             }
+            wx.hideLoading()
         } catch (e) {
             this.setData({
                 dialogList: []
             })
+            wx.hideLoading();
         }
     },
 
@@ -507,6 +510,21 @@ Page({
     },
 
     /**
+     * 初始化全局数据
+     */
+    initGlobalData: function() {
+        this.setData({
+            userInfo: app.globalData.userInfo,
+            openid: app.globalData.openid,
+        })
+        let data = {
+            userInfo: app.globalData.userInfo,
+            openid: app.globalData.openid,
+        }
+        console.log("首页初始化后的全局参数", data)
+    },
+
+    /**
      * 生命周期函数--监听页面加载
      */
     onLoad: function(options) {
@@ -522,8 +540,6 @@ Page({
 
         // 获取权限
         app.getRecordAuth()
-
-        this.initUserInfo()
 
         console.log(this.data)
     },
@@ -543,7 +559,8 @@ Page({
 
         this.initCard()
 
-        // 当打开还在翻译时，显示透明蒙层，不许触碰
+        this.initGlobalData()
+            // 当打开还在识别时，显示透明蒙层，不许触碰
         if (this.data.recordStatus == 2) {
             wx.showLoading({
                 mask: true

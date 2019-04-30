@@ -7,32 +7,38 @@
       <view class="margin-left text-lg">{{userInfo.nickName}}</view>
     </view>
   </view>
-  <scroll-view scroll-y="true">
-    <block wx:for="123">
+  <scroll-view scroll-y="true" class="content-wrap">
+    <view class="padding-lg" wx:if="{{showNo}}">
+      <view class="bg-gradual-blue padding radius text-center shadow-blur">
+        <text class="text-lg">您还没有内容，赶紧去录一个吧！</text>
+      </view>
+    </view>
+    <block wx:for="{{contentData}}" wx:for-index="idx" wx:for-item="item" wx:key="id">
       <view class="cu-bar bg-white solid-bottom margin-top">
         <view class="action">
           <text class="cuIcon-title text-orange "></text>
-          4/29 12:57
+          {{item.recordTime}}
         </view>
       </view>
       <view class="cu-list menu ">
-        <block wx:for="123">
+        <block wx:for="{{item.content}}" wx:for-index="idx" wx:for-item="content" wx:key="*this">
           <view class="cu-item">
             <view class="content text-cut">
               <text class="cuIcon-voice text-green"></text>
-              <text class="text-gray">去玩儿无群二无群二群无若无群二额无群若群翁让我签二无群二无群二</text>
+              <text class="text-gray">{{content.recording.text}}</text>
             </view>
             <view class="action">
-              <!-- <button class="cu-btn round bg-green shadow ">
-              <text class="cuIcon-upload"></text>
-              播放
-            </button> -->
-              <button class="cu-btn icon">
+              <button class="cu-btn icon" data-currentplay="{{content.recording}}" catch:tap="clickPlayVoice">
                 <text class="cuIcon-playfill"></text>
+                <!-- <text class="cuIcon-stop"></text>
+                <text class="cuIcon-upload"></text> -->
               </button>
-              <button class="cu-btn round bg-cyan shadow margin-left" bindtap="showModal" data-target="Modal">
-                <text class="cuIcon-upload"></text>
-                详情
+              <!-- <button class="cu-btn icon">
+                <text class="cuIcon-stop"></text>
+              </button> -->
+              <button class="cu-btn round bg-cyan shadow margin-left" data-currenttext="{{content.recording.text}}" bindtap="showModal" data-target="Modal">
+                <text class="">详情</text>
+                
               </button>
             </view>
           </view>
@@ -43,12 +49,12 @@
   <view class="cu-modal {{modalName=='Modal'?'show':''}}">
     <view class="cu-dialog">
       <view class="cu-bar bg-white justify-end">
-        <view class="content">Modal标题</view>
+        <view class="content">识别文字</view>
         <view class="action" bindtap="hideModal">
           <text class="cuIcon-close text-red"></text>
         </view>
       </view>
-      <view class="padding-xl">Modal 内容。</view>
+      <view class="padding-xl">{{modelContent}}</view>
     </view>
   </view>
 </view>

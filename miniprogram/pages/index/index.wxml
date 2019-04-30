@@ -25,10 +25,10 @@
       </button>
     </view> -->
     <view class="padding flex flex-direction">
-      <button class="cu-btn bg-green lg" disabled="{{talkbtnDisabled}}" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
+      <button class="cu-btn bg-green lg shadow" disabled="{{talkbtnDisabled}}" catchtouchstart="streamRecord" catchtouchend="endStreamRecord">
         请说话
       </button>
-      <button class="cu-btn text-green line-green  margin-tb-sm lg" loading="{{savebtnLoading}}" disabled="{{savebtnDisable}}" catchtap="saveContent">
+      <button class="cu-btn text-green line-green  margin-tb lg shadow" loading="{{savebtnLoading}}" disabled="{{savebtnDisable}}" catchtap="saveContent">
         点击保存
       </button>
     </view>

@@ -1,8 +1,7 @@
 {
     "pages": [
         "pages/index/index",
-        "pages/notes/notes",
-        "pages/notes-content/notes-content"
+        "pages/notes/notes"
     ],
     "window": {
         "backgroundColor": "#f8f8f8",
