@@ -19,7 +19,7 @@
 
 ## 小程序预览
 
-<img src="https://blog.firedata.club/a7481e12496513d93258cdc1db13a175" width=400>
+<img src="https://blog.firedata.club/a7481e12496513d93258cdc1db13a175" width=300>
 
 ## 悲剧
 
